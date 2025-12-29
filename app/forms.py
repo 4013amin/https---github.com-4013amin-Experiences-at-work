@@ -16,5 +16,13 @@ class regiter_otp(forms.Form):
 
 
 class verify_otp(forms.Form):
-    phone = forms.CharField(max_length=15)
-    code = forms.CharField(max_length=6)
+    phone = forms.CharField(
+        max_length=15, 
+        label="شماره موبایل",
+        widget=forms.TextInput(attrs={'readonly': 'readonly'})
+    )
+    code = forms.CharField(
+        max_length=6, 
+        label="کد تایید",
+        widget=forms.PasswordInput() 
+    )

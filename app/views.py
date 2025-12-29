@@ -43,7 +43,7 @@ def otp_request_view(request):
             #send_SMS
 
             print(f"OTP for {profile.user.username}: {code}")
-            return render(request, 'otp_sent.html', {'phone': phone})
+            return render(request, 'auth/verify_otp.html', {'phone': phone})
            
         except models.Profile.DoesNotExist:
             form = forms.regiter_otp()
@@ -66,11 +66,11 @@ def otp_verify_view(request):
                 otp.save()
                 return render(request, 'otp_success.html', {'username': profile.user.username})
             else:
-                form = forms.verify_otp()
                 form.add_error('code', 'کد وارد شده نامعتبر است یا قبلاً استفاده شده است.')
-                return render(request, 'auth/verify_otp.html', {'form': form, 'phone': phone})
+                form = forms.verify_otp(initial={'phone': phone}) 
+            return render(request, 'auth/verify_otp.html', {'form': form, 'phone': phone})
         except models.Profile.DoesNotExist:
-            form = forms.verify_otp()
+            form = forms.regiter_otp()
             form.add_error('phone', 'شماره تلفن یافت نشد. لطفاً ابتدا ثبت نام کنید.')
             return render(request, 'auth/login_otp.html', {'form': form})
     else:
