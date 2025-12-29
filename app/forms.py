@@ -13,3 +13,8 @@ class RegisterForm(forms.Form):
 
 class regiter_otp(forms.Form):
     phone = forms.CharField(max_length=15)
+
+
+class verify_otp(forms.Form):
+    phone = forms.CharField(max_length=15)
+    code = forms.CharField(max_length=6)

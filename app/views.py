@@ -52,3 +52,27 @@ def otp_request_view(request):
     else:
         form = forms.regiter_otp()
     return render(request, 'auth/register_otp.html', {'form': form})
+
+
+def otp_verify_view(request):
+    if request.method == 'POST':
+        phone = request.POST.get('phone')
+        code = request.POST.get('code')
+        try:
+            profile = models.Profile.objects.get(phone=phone)
+            otp = models.OTP.objects.filter(user=profile.user, code=code, is_used=False).last()
+            if otp:
+                otp.is_used = True
+                otp.save()
+                return render(request, 'otp_success.html', {'username': profile.user.username})
+            else:
+                form = forms.verify_otp()
+                form.add_error('code', 'کد وارد شده نامعتبر است یا قبلاً استفاده شده است.')
+                return render(request, 'auth/verify_otp.html', {'form': form, 'phone': phone})
+        except models.Profile.DoesNotExist:
+            form = forms.verify_otp()
+            form.add_error('phone', 'شماره تلفن یافت نشد. لطفاً ابتدا ثبت نام کنید.')
+            return render(request, 'auth/login_otp.html', {'form': form})
+    else:
+        form = forms.verify_otp()
+    return render(request, 'auth/verify_otp.html', {'form': form})
