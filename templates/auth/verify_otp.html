@@ -12,8 +12,8 @@
             کد ارسال شده به <strong>{{ phone }}</strong> را وارد کنید.
         </p>
 
-        <form method="POST">
-            {% csrf_token %}
+<!-- action="..." را حتماً اضافه کنید -->
+        <form method="POST" action="{% url 'verify_otp' %}">            {% csrf_token %}
             <!-- فیلد مخفی برای نگه داشتن شماره موبایل -->
             <input type="hidden" name="phone" value="{{ phone }}">
             

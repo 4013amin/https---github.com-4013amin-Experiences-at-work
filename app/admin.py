@@ -4,8 +4,8 @@ from . import models
 # Register your models here.
 @admin.register(models.Profile)
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'username', 'phone')
-    search_fields = ('username', 'phone')
+    list_display = ('user','phone')
+    search_fields = ('phone', 'user__username')
 
 @admin.register(models.OTP)
 class OTPAdmin(admin.ModelAdmin):

@@ -4,7 +4,7 @@ from . import models
 import random
 from django.utils import timezone 
 from datetime import timedelta
-
+from django.contrib.auth import login 
 
 # Create your views here.
 def register(request):
@@ -18,11 +18,11 @@ def register(request):
 
             if models.User.objects.filter(username=username).exists():
                 form.add_error('username', 'این نام کاربری قبلاً انتخاب شده است.')
-                return render(request, 'auth/register_otp.html', {'form': form})
+                return render(request, 'auth/register.html', {'form': form})
 
             if models.Profile.objects.filter(phone=phone).exists():
                 form.add_error('phone', 'این شماره تلفن قبلاً ثبت شده است.')
-                return render(request, 'auth/register_otp.html', {'form': form})
+                return render(request, 'auth/register.html', {'form': form})
 
             user_instance = models.User.objects.create_user(username=username)
             profile = models.Profile.objects.create(
@@ -69,7 +69,8 @@ def otp_verify_view(request):
         code = request.POST.get('code')
         try:
             profile = models.Profile.objects.get(phone=phone)
-            otp = models.OTP.objects.filter(user=profile.user, code=code).first()
+            otp = models.OTP.objects.filter(user=profile.user, code=code).last()
+            
             if otp:
                 if otp.created_at < timezone.now() - timedelta(minutes=2):
                     otp.delete()
@@ -78,6 +79,7 @@ def otp_verify_view(request):
                     return render(request, 'auth/verify_otp.html', {'form': form, 'phone': phone})
 
                 otp.delete()
+                
                 login(request, profile.user)
 
                 return render(request, 'otp_success.html', {'username': profile.user.username})
@@ -85,10 +87,11 @@ def otp_verify_view(request):
                 form = forms.verify_otp(request.POST)
                 form.add_error('code', 'کد تایید نادرست است. لطفاً مجدداً تلاش کنید.')
                 return render(request, 'auth/verify_otp.html', {'form': form, 'phone': phone})
+                
         except models.Profile.DoesNotExist:
-            form = forms.verify_otp(request.POST)
+            form = forms.regiter_otp()
             form.add_error('phone', 'شماره تلفن یافت نشد. لطفاً ابتدا ثبت نام کنید.')
-            return render(request, 'auth/verify_otp.html', {'form': form, 'phone': phone})
+            return render(request, 'auth/register_otp.html', {'form': form})
     else:
         form = forms.verify_otp()
         return render(request, 'auth/verify_otp.html', {'form': form})
