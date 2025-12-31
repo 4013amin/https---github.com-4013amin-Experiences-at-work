@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}داشبورد کاربری{% endblock %}
+
+{% block content %}
+<div class="card auth-card border-0">
+    <!-- هدر با گرادینت رنگی -->
+    <div class="auth-header text-center py-5">
+        <div class="mb-3">
+            <!-- آیکون پروفایل -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" fill="currentColor" class="bi bi-person-circle text-white opacity-75" viewBox="0 0 16 16">
+                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+            </svg>
+        </div>
+        <h2 class="fw-bold">{{ user.username }}</h2>
+        <span class="badge bg-light text-dark rounded-pill px-3">کاربر عادی</span>
+    </div>
+
+    <div class="card-body p-4">
+        <h5 class="text-muted mb-4 border-bottom pb-2">اطلاعات حساب</h5>
+        
+        <div class="row g-3">
+            <div class="col-md-12">
+                <label class="text-muted small">شماره موبایل</label>
+                <div class="fs-5 fw-bold text-dark">
+                    {{ user.profile.phone|default:"-" }}
+                </div>
+            </div>
+            
+            <div class="col-md-12">
+                <label class="text-muted small">توضیحات پروفایل</label>
+                <div class="p-3 bg-light rounded mt-1 text-secondary">
+                    {% if user.profile.description %}
+                        {{ user.profile.description }}
+                    {% else %}
+                        <span class="small fst-italic">توضیحاتی ثبت نشده است.</span>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="col-md-12">
+                <label class="text-muted small">تاریخ عضویت</label>
+                <div class="fs-6">
+                    <!-- نمایش تاریخ به میلادی (برای شمسی نیاز به کتابخانه جلالی است) -->
+                    {{ user.date_joined|date:"Y/m/d" }}
+                </div>
+            </div>
+        </div>
+
+        <div class="d-grid gap-2 mt-5">
+            <!-- دکمه خروج -->
+            <a href="{% url 'logout' %}" class="btn btn-outline-danger py-2">
+                خروج از حساب کاربری
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

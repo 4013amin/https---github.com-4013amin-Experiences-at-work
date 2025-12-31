@@ -1,10 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render , redirect 
 from . import forms 
 from . import models
 import random
 from django.utils import timezone 
 from datetime import timedelta
-from django.contrib.auth import login 
+from django.contrib.auth import login , logout
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def register(request):
@@ -82,8 +83,8 @@ def otp_verify_view(request):
                 otp.delete()
                 
                 login(request, profile.user)
+                return redirect('home')
 
-                return render(request, 'otp_success.html', {'username': profile.user.username})
             else:
                 form = forms.verify_otp(request.POST)
                 form.add_error('code', 'کد تایید نادرست است. لطفاً مجدداً تلاش کنید.')
@@ -96,3 +97,14 @@ def otp_verify_view(request):
     else:
         form = forms.verify_otp()
         return render(request, 'auth/verify_otp.html', {'form': form})
+
+def logout_view(request):
+    logout(request)
+    return redirect('otp_request')
+
+
+
+@login_required(login_url='otp_request')
+def home(request):
+    pass
+    return render(request, 'home/home.html')
