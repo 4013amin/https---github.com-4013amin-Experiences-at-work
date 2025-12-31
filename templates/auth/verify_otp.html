@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}تایید کد{% endblock %}
+
+{% block content %}
+<div class="card auth-card">
+    <div class="auth-header bg-success text-white">
+        <h4 class="mb-0">تایید شماره موبایل</h4>
+        <small>کد ۶ رقمی ارسال شده را وارد کنید</small>
+    </div>
+    <div class="card-body p-4">
+        
+        <div class="alert alert-info py-2 text-center small">
+            کد تایید برای شماره <strong>{{ phone }}</strong> ارسال شد.
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+            
+            <!-- فیلد مخفی یا نمایشی برای شماره تلفن -->
+            <input type="hidden" name="phone" value="{{ phone }}">
+            
+            <div class="mb-4 text-center">
+                <label for="{{ form.code.id_for_label }}" class="form-label">کد تایید</label>
+                <input type="text" name="code" class="form-control text-center fs-4 letter-spacing-2" 
+                       id="{{ form.code.id_for_label }}" maxlength="6" autocomplete="off" placeholder="- - - - - -">
+                {% if form.code.errors %}
+                    <div class="text-danger small mt-2">
+                        {{ form.code.errors.0 }}
+                    </div>
+                {% endif %}
+                
+                {% if form.non_field_errors %}
+                    <div class="text-danger small mt-2">
+                        {{ form.non_field_errors.0 }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-success py-2">تایید و ورود</button>
+            </div>
+        </form>
+
+        <div class="text-center mt-3">
+            <form action="{% url 'otp_request' %}" method="get">
+                <button type="submit" class="btn btn-link text-decoration-none text-muted small">ارسال مجدد کد / تغییر شماره</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .letter-spacing-2 {
+        letter-spacing: 0.5em;
+    }
+</style>
+{% endblock %}

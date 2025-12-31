@@ -1,65 +1,47 @@
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ورود با کد تایید</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
-    <style>body { font-family: Vazirmatn, sans-serif; }</style>
-</head>
-<body class="bg-slate-50 flex items-center justify-center min-h-screen">
-    <div class="max-w-md w-full bg-white shadow-2xl rounded-3xl p-10 m-4 border border-gray-100">
-        <div class="text-center mb-8">
-            <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
+{% extends 'base.html' %}
+
+{% block title %}ورود با شماره موبایل{% endblock %}
+
+{% block content %}
+<div class="card auth-card">
+    <div class="auth-header">
+        <h4 class="mb-0">ورود / تایید شماره</h4>
+        <small>کد تایید به شماره شما ارسال خواهد شد</small>
+    </div>
+    <div class="card-body p-4">
+
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+                {% for error in form.non_field_errors %}
+                    {{ error }}
+                {% endfor %}
             </div>
-            <h2 class="text-2xl font-black text-gray-800">ورود به حساب</h2>
-            <p class="text-gray-500 mt-2">شماره موبایل و کد تایید را وارد کنید</p>
-        </div>
-        
-        <form method="post" class="space-y-5">
+        {% endif %}
+
+        <form method="POST">
             {% csrf_token %}
             
-            {% for field in form %}
-            <div>
-                <label class="block text-sm font-semibold text-gray-600 mb-2">{{ field.label }}</label>
-                {{ field }}
-                {% if field.errors %}
-                    <p class="text-red-500 text-xs mt-2 font-medium">{{ field.errors.0 }}</p>
+            <div class="mb-3">
+                <label for="{{ form.phone.id_for_label }}" class="form-label">شماره موبایل</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light text-muted">IR +98</span>
+                    <input type="text" name="phone" class="form-control {% if form.phone.errors %}is-invalid{% endif %}" id="{{ form.phone.id_for_label }}" placeholder="9123456789">
+                </div>
+                {% if form.phone.errors %}
+                    <div class="text-danger small mt-1">
+                        {{ form.phone.errors.0 }}
+                    </div>
                 {% endif %}
             </div>
-            {% endfor %}
 
-            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-2xl shadow-lg shadow-indigo-200 transition-all active:scale-95">
-                ورود به پنل کاربری
-            </button>
+            <div class="d-grid gap-2 mt-4">
+                <button type="submit" class="btn btn-primary btn-primary-custom py-2">ارسال کد تایید</button>
+            </div>
         </form>
 
-        <div class="mt-8 pt-6 border-t border-gray-100 text-center">
-            <a href="{% url 'register' %}" class="text-sm font-medium text-indigo-600 hover:text-indigo-800">هنوز ثبت‌نام نکرده‌اید؟</a>
+        <div class="text-center mt-3">
+            <a href="{% url 'register' %}" class="text-decoration-none text-muted small">هنوز ثبت نام نکرده‌اید؟ ایجاد حساب</a>
         </div>
     </div>
-
-    <style>
-        input {
-            width: 100%;
-            padding: 0.8rem 1rem;
-            border: 2px solid #f1f5f9;
-            border-radius: 1rem;
-            background-color: #f8fafc;
-            text-align: center;
-            letter-spacing: 0.1em;
-            transition: all 0.3s;
-        }
-        input:focus {
-            border-color: #4f46e5;
-            background-color: #fff;
-            outline: none;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-    </style>
-</body>
-</html>     
+</div>
+{% endblock %}

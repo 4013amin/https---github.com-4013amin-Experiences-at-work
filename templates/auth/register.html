@@ -1,61 +1,60 @@
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ثبت‌نام در سامانه</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
-    <style>
-        body { font-family: Vazirmatn, sans-serif; }
-    </style>
-</head>
-<body class="bg-gray-50 flex items-center justify-center min-h-screen">
-    <div class="max-w-md w-full bg-white shadow-lg rounded-2xl p-8 m-4">
-        <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">ایجاد حساب کاربری</h2>
+{% extends 'base.html' %}
+
+{% block title %}ثبت نام در سایت{% endblock %}
+
+{% block content %}
+<div class="card auth-card">
+    <div class="auth-header">
+        <h4 class="mb-0">ایجاد حساب کاربری</h4>
+        <small>لطفاً اطلاعات زیر را تکمیل کنید</small>
+    </div>
+    <div class="card-body p-4">
         
-        <form method="post" class="space-y-4">
+        <!-- نمایش ارورهای کلی -->
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+                {% for error in form.non_field_errors %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="POST">
             {% csrf_token %}
             
-            {% for field in form %}
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">{{ field.label }}</label>
-                <div class="relative">
-                    {{ field }}
-                </div>
-                {% if field.errors %}
-                    <p class="text-red-500 text-xs mt-1">{{ field.errors.0 }}</p>
+            <div class="mb-3">
+                <label for="{{ form.username.id_for_label }}" class="form-label">نام کاربری</label>
+                <input type="text" name="username" class="form-control {% if form.username.errors %}is-invalid{% endif %}" id="{{ form.username.id_for_label }}" value="{{ form.username.value|default_if_none:'' }}">
+                {% if form.username.errors %}
+                    <div class="invalid-feedback">
+                        {{ form.username.errors.0 }}
+                    </div>
                 {% endif %}
             </div>
-            {% endfor %}
 
-            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition duration-200 ease-in-out transform hover:scale-[1.02]">
-                تایید و دریافت کد
-            </button>
+            <div class="mb-3">
+                <label for="{{ form.phone.id_for_label }}" class="form-label">شماره موبایل</label>
+                <input type="text" name="phone" class="form-control {% if form.phone.errors %}is-invalid{% endif %}" id="{{ form.phone.id_for_label }}" value="{{ form.phone.value|default_if_none:'' }}" placeholder="0912...">
+                {% if form.phone.errors %}
+                    <div class="invalid-feedback">
+                        {{ form.phone.errors.0 }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                <label for="{{ form.description.id_for_label }}" class="form-label">توضیحات (اختیاری)</label>
+                <textarea name="description" class="form-control" rows="3">{{ form.description.value|default_if_none:'' }}</textarea>
+            </div>
+
+            <div class="d-grid gap-2 mt-4">
+                <button type="submit" class="btn btn-primary btn-primary-custom py-2">ثبت نام</button>
+            </div>
         </form>
-
-        <div class="mt-6 text-center">
-            <p class="text-sm text-gray-600">
-                قبلاً ثبت‌نام کرده‌اید؟ 
-                <a href="{% url 'login_otp' %}" class="text-blue-600 hover:underline">وارد شوید</a>
-            </p>
+        
+        <div class="text-center mt-3">
+            <a href="{% url 'otp_request' %}" class="text-decoration-none text-muted small">قبلاً ثبت نام کرده‌اید؟ ورود با OTP</a>
         </div>
     </div>
-
-    <style>
-        /* استایل دهی به فیلدهایی که جنگو رندر می‌کند */
-        input, textarea {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #e5e7eb;
-            border-radius: 0.75rem;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-        input:focus, textarea:focus {
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-    </style>
-</body>
-</html>
+</div>
+{% endblock %}
