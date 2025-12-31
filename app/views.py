@@ -32,7 +32,7 @@ def register(request):
             )
 
             profile.save()
-            return render(request, 'register_success.html', {'username': username})
+            return render(request, 'otp_success.html', {'username': username})
     else:
         form = forms.RegisterForm()
     context = {'form': form}

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}خطا در ورود{% endblock %}
+
+{% block content %}
+<div class="card auth-card border-danger">
+    <div class="auth-header bg-danger">
+        <h4 class="mb-0">کاربر یافت نشد</h4>
+    </div>
+    <div class="card-body p-4">
+        
+        <!-- نمایش ارور اگر از سمت ویو ارسال شده باشد -->
+        {% if form.phone.errors %}
+        <div class="alert alert-warning text-center">
+            {% for error in form.phone.errors %}{{ error }}{% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="POST" action="{% url 'otp_request' %}">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label">شماره موبایل خود را مجدد چک کنید:</label>
+                <input type="text" name="phone" class="form-control" placeholder="0912...">
+            </div>
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-danger">تلاش مجدد</button>
+                <a href="{% url 'register' %}" class="btn btn-outline-secondary">می‌خواهم ثبت نام کنم</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

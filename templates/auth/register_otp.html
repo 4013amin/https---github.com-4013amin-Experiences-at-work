@@ -1,46 +1,36 @@
 {% extends 'base.html' %}
-
-{% block title %}ورود با شماره موبایل{% endblock %}
+{% block title %}ورود با موبایل{% endblock %}
 
 {% block content %}
 <div class="card auth-card">
     <div class="auth-header">
-        <h4 class="mb-0">ورود / تایید شماره</h4>
-        <small>کد تایید به شماره شما ارسال خواهد شد</small>
+        <h4 class="mb-0">ورود به سایت</h4>
+        <small>برای ورود شماره موبایل خود را وارد کنید</small>
     </div>
     <div class="card-body p-4">
-
-        {% if form.non_field_errors %}
-            <div class="alert alert-danger">
-                {% for error in form.non_field_errors %}
-                    {{ error }}
-                {% endfor %}
-            </div>
-        {% endif %}
-
         <form method="POST">
             {% csrf_token %}
-            
             <div class="mb-3">
-                <label for="{{ form.phone.id_for_label }}" class="form-label">شماره موبایل</label>
-                <div class="input-group">
-                    <span class="input-group-text bg-light text-muted">IR +98</span>
-                    <input type="text" name="phone" class="form-control {% if form.phone.errors %}is-invalid{% endif %}" id="{{ form.phone.id_for_label }}" placeholder="9123456789">
-                </div>
-                {% if form.phone.errors %}
-                    <div class="text-danger small mt-1">
-                        {{ form.phone.errors.0 }}
-                    </div>
-                {% endif %}
+                <label class="form-label">شماره موبایل</label>
+                <input type="text" name="phone" placeholder="0912..."
+                       class="form-control {% if form.phone.errors %}is-invalid{% endif %}">
+                
+                {% for error in form.phone.errors %}
+                    <div class="invalid-feedback">{{ error }}</div>
+                {% endfor %}
+                
+                <!-- ارورهای کلی فرم -->
+                {% for error in form.non_field_errors %}
+                     <div class="alert alert-danger mt-2 small">{{ error }}</div>
+                {% endfor %}
             </div>
 
-            <div class="d-grid gap-2 mt-4">
-                <button type="submit" class="btn btn-primary btn-primary-custom py-2">ارسال کد تایید</button>
+            <div class="d-grid mt-4">
+                <button type="submit" class="btn btn-custom py-2">ارسال کد تایید</button>
             </div>
         </form>
-
         <div class="text-center mt-3">
-            <a href="{% url 'register' %}" class="text-decoration-none text-muted small">هنوز ثبت نام نکرده‌اید؟ ایجاد حساب</a>
+            <a href="{% url 'register' %}" class="text-decoration-none small text-muted">حساب ندارید؟ ثبت نام کنید</a>
         </div>
     </div>
 </div>
