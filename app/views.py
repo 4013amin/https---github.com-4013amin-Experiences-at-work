@@ -27,6 +27,7 @@ def register(request):
             user_instance = models.User.objects.create_user(username=username)
             profile = models.Profile.objects.create(
                 user=user_instance,
+                username =username,
                 phone=phone,
                 description=description
             )

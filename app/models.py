@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    username = models.CharField(max_length=150, unique=True)
     phone = models.CharField(max_length=15, blank=True)
     description = models.TextField(null = True , blank=True)
 
