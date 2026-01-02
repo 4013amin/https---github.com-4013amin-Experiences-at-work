@@ -9,7 +9,6 @@ from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def register(request):
-
     if request.method == 'POST':
         form = forms.RegisterForm(request.POST)
         if form.is_valid():
@@ -106,5 +105,22 @@ def logout_view(request):
 
 @login_required(login_url='otp_request')
 def home(request):
-    pass
-    return render(request, 'home/home.html')
+    categories = models.Category.objects.all()
+
+
+    context = {'categories': categories}
+    return render(request, 'home/home.html' , context)
+
+
+
+def product_list(request):
+    return render(request, 'home/product_list.html')
+
+def product_detail(request, pk):
+    return render(request, 'home/product_detail.html')
+
+def cart(request):
+    return render(request, 'home/cart.html')
+
+def checkout(request):
+    return render(request, 'home/checkout.html')

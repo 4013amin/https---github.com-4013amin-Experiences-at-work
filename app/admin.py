@@ -12,3 +12,8 @@ class OTPAdmin(admin.ModelAdmin):
     list_display = ('user', 'code', 'created_at')
     search_fields = ('user__username', 'code')
     readonly_fields = ('created_at',)
+
+
+@admin.register(models.Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ['title']

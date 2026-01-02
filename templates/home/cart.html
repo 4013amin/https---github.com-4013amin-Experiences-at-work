@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="fw-bold mb-4">سبد خرید</h2>
+    
+    <div class="row">
+        <!-- جدول کالاها -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead>
+                                <tr class="text-secondary small">
+                                    <th>محصول</th>
+                                    <th>قیمت واحد</th>
+                                    <th>تعداد</th>
+                                    <th>قیمت کل</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <img src="https://via.placeholder.com/60" class="rounded me-3">
+                                            <span class="small fw-bold">آیفون 13</span>
+                                        </div>
+                                    </td>
+                                    <td>40,000,000</td>
+                                    <td>
+                                        <input type="number" class="form-control form-control-sm text-center" value="1" style="width: 60px;">
+                                    </td>
+                                    <td class="fw-bold">40,000,000</td>
+                                    <td><button class="btn btn-sm text-danger"><i class="bi bi-trash"></i></button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- فاکتور نهایی -->
+        <div class="col-lg-4 mt-4 mt-lg-0">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold mb-3">خلاصه سفارش</h5>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted small">جمع کل کالاها</span>
+                        <span>40,000,000</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted small">هزینه ارسال</span>
+                        <span class="text-success">رایگان</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-4">
+                        <span class="fw-bold">مبلغ قابل پرداخت</span>
+                        <span class="fw-bold fs-5">40,000,000 تومان</span>
+                    </div>
+                    
+                    <!-- کد تخفیف -->
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="کد تخفیف">
+                        <button class="btn btn-outline-secondary">ثبت</button>
+                    </div>
+
+                    <a href="{% url 'checkout' %}" class="btn btn-danger w-100 py-2 fw-bold">ادامه جهت تسویه حساب</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
