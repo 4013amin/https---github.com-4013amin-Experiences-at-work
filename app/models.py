@@ -22,10 +22,17 @@ class OTP(models.Model):
 
 
 class Product(models.Model):
+    image = models.ImageField(upload_to="products/")
     title = models.CharField(max_length=100)
     description = models.TextField()
     price = models.FloatField()
     offer = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name_plural = "Products"
 
 
 class Category(models.Model):
@@ -34,6 +41,9 @@ class Category(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        verbose_name_plural = "Categories"
+
 
 class Cart(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -41,3 +51,6 @@ class Cart(models.Model):
     code_offer = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
+
+    class Meta:
+        verbose_name_plural = "Cart"

@@ -106,9 +106,9 @@ def logout_view(request):
 @login_required(login_url='otp_request')
 def home(request):
     categories = models.Category.objects.all()
+    products = models.Product.objects.all()
 
-
-    context = {'categories': categories}
+    context = {'categories': categories , 'products': products}
     return render(request, 'home/home.html' , context)
 
 

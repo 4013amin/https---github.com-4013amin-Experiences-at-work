@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
      path('verify_otp/', views.otp_verify_view, name='verify_otp'),
@@ -9,8 +11,8 @@ urlpatterns = [
 
      path('' , views.home, name='home'),
 
-     path('products/', views.product_list, name='product_list'),  # لیست محصولات
-     path('products/<int:pk>/', views.product_detail, name='product_detail'),  # جزئیات محصول (با ID)
-     path('cart/', views.cart, name='cart'),  # سبد خرید
+     path('products/', views.product_list, name='product_list'),
+     path('products/<int:pk>/', views.product_detail, name='product_detail'),
+     path('cart/', views.cart, name='cart'),
      path('checkout/', views.checkout, name='checkout'),
-]
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
