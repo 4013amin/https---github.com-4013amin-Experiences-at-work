@@ -2,36 +2,92 @@
 {% block title %}ورود با موبایل{% endblock %}
 
 {% block content %}
-<div class="card auth-card">
-    <div class="auth-header">
-        <h4 class="mb-0">ورود به سایت</h4>
-        <small>برای ورود شماره موبایل خود را وارد کنید</small>
-    </div>
-    <div class="card-body p-4">
-        <form method="POST">
-            {% csrf_token %}
-            <div class="mb-3">
-                <label class="form-label">شماره موبایل</label>
-                <input type="text" name="phone" placeholder="0912..."
-                       class="form-control {% if form.phone.errors %}is-invalid{% endif %}">
-                
-                {% for error in form.phone.errors %}
-                    <div class="invalid-feedback">{{ error }}</div>
-                {% endfor %}
-                
-                <!-- ارورهای کلی فرم -->
-                {% for error in form.non_field_errors %}
-                     <div class="alert alert-danger mt-2 small">{{ error }}</div>
-                {% endfor %}
+
+<!-- استایل‌های اختصاصی همین صفحه -->
+<style>
+    .auth-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        background: #fff;
+    }
+
+    .auth-header {
+        background: linear-gradient(45deg, #4e73df, #224abe);
+        color: white;
+        padding: 30px 20px;
+        text-align: center;
+    }
+
+    .btn-custom {
+        background-color: #4e73df;
+        color: white;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+
+    .btn-custom:hover {
+        background-color: #2e59d9;
+        transform: translateY(-2px);
+    }
+
+    .form-control:focus {
+        border-color: #4e73df;
+        box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+    }
+</style>
+
+<!-- بدنه اصلی فرم -->
+<div class="row justify-content-center align-items-center">
+    <div class="col-md-6 col-lg-4">
+        <div class="card auth-card">
+            
+            <!-- هدر کارت -->
+            <div class="auth-header">
+                <h4 class="mb-2">ورود به حساب کاربری</h4>
+                <small class="opacity-75">لطفاً شماره موبایل خود را وارد کنید</small>
             </div>
 
-            <div class="d-grid mt-4">
-                <button type="submit" class="btn btn-custom py-2">ارسال کد تایید</button>
+            <!-- بدنه کارت -->
+            <div class="card-body p-4">
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <div class="mb-4">
+                        <label class="form-label text-muted small">شماره موبایل</label>
+                        <input type="text" name="phone" placeholder="مثال: 09123456789"
+                               class="form-control form-control-lg {% if form.phone.errors %}is-invalid{% endif %}"
+                               value="{{ form.phone.value|default:'' }}">
+                        
+                        <!-- نمایش ارورهای فیلد موبایل -->
+                        {% for error in form.phone.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- نمایش ارورهای کلی (Non-field errors) -->
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger small">
+                            {% for error in form.non_field_errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-custom py-2">ارسال کد تایید</button>
+                    </div>
+
+                </form>
+
+                <div class="text-center mt-4">
+                    <p class="small text-muted mb-0">حساب کاربری ندارید؟</p>
+                    <a href="{% url 'register' %}" class="text-decoration-none fw-bold text-primary">ثبت نام کنید</a>
+                </div>
             </div>
-        </form>
-        <div class="text-center mt-3">
-            <a href="{% url 'register' %}" class="text-decoration-none small text-muted">حساب ندارید؟ ثبت نام کنید</a>
         </div>
     </div>
 </div>
+
 {% endblock %}

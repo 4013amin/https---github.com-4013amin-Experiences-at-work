@@ -1,12 +1,14 @@
 from django.db import models
 from django.contrib.auth.models import User
+
+
 # Create your models here.
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     username = models.CharField(max_length=150, unique=True)
     phone = models.CharField(max_length=15, blank=True)
-    description = models.TextField(null = True , blank=True)
+    description = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return self.user.username
@@ -27,6 +29,7 @@ class Product(models.Model):
     description = models.TextField()
     price = models.FloatField()
     offer = models.BooleanField(default=False)
+    is_best_seller = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title
@@ -50,7 +53,6 @@ class Cart(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     code_offer = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
-
 
     class Meta:
         verbose_name_plural = "Cart"

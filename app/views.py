@@ -42,23 +42,29 @@ def register(request):
 
 def otp_request_view(request):
     if request.method == 'POST':
-        phone = request.POST.get('phone')
-        try:
-            profile = models.Profile.objects.get(phone=phone)
-            models.OTP.objects.filter(user=profile.user).delete()
-            code = str(random.randint(100000, 999999))
-            otp = models.OTP.objects.create(user=profile.user, code=code)
-            otp.save()
+        form = forms.regiter_otp(request.POST)
+        if form.is_valid():
+            phone = form.cleaned_data['phone']
+            try:
+                profile = models.Profile.objects.get(phone=phone)
 
-            #send_SMS
+                models.OTP.objects.filter(user=profile.user).delete()
+                code = str(random.randint(100000, 999999))
+                otp = models.OTP.objects.create(user=profile.user, code=code)
 
-            print(f"OTP for {profile.user.username}: {code}")
-            return render(request, 'auth/verify_otp.html', {'phone': phone})
-           
-        except models.Profile.DoesNotExist:
-            form = forms.regiter_otp()
-            form.add_error('phone', 'شماره تلفن یافت نشد. لطفاً ابتدا ثبت نام کنید.')
-            return render(request, 'auth/verify_otp.html', {'form': form})
+                print(f"OTP for {profile.user.username}: {code}")
+                #Send_SMS
+
+                verify_form = forms.verify_otp(initial={'phone': phone})
+                return render(request, 'auth/verify_otp.html', {'form': verify_form, 'phone': phone})
+
+            except models.Profile.DoesNotExist:
+                form.add_error('phone', 'شماره تلفن یافت نشد. لطفاً ابتدا ثبت نام کنید.')
+
+                return render(request, 'auth/register_otp.html', {'form': form})
+        else:
+            return render(request, 'auth/register_otp.html', {'form': form})
+
     else:
         form = forms.regiter_otp()
     return render(request, 'auth/register_otp.html', {'form': form})
