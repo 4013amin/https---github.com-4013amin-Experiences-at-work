@@ -112,9 +112,11 @@ def logout_view(request):
 @login_required(login_url='otp_request')
 def home(request):
     categories = models.Category.objects.all()
-    products = models.Product.objects.all()
+    products = models.Product.objects.filter(is_best_seller = True)
 
-    context = {'categories': categories , 'products': products}
+    some_product = models.Product.objects.filter(is_best_seller = False)
+
+    context = {'categories': categories , 'products': products , 'some_product': some_product}
     return render(request, 'home/home.html' , context)
 
 
