@@ -14,14 +14,15 @@
         <div class="col-lg-3 mb-4">
             <div class="card border-0 shadow-sm p-3">
                 <h5 class="mb-3">فیلترها</h5>
-                
+
                 <div class="mb-4">
                     <h6 class="fw-bold mb-2">دسته‌بندی</h6>
+                    {% for categori in categories %}
                     <ul class="list-unstyled small">
-                        <li><a href="#" class="text-secondary py-1 d-block">موبایل</a></li>
-                        <li><a href="#" class="text-secondary py-1 d-block">لپ‌تاپ</a></li>
-                        <li><a href="#" class="text-secondary py-1 d-block">تبلت</a></li>
+                        <li><a href="#" class="text-secondary py-1 d-block">{{ categori.title }}</a></li>
+
                     </ul>
+                    {% endfor %}
                 </div>
 
                 <div class="mb-4">
@@ -43,6 +44,7 @@
         </div>
 
         <!-- لیست محصولات -->
+
         <div class="col-lg-9">
             <div class="d-flex justify-content-between align-items-center bg-white p-3 rounded shadow-sm mb-4">
                 <span class="small text-muted">نمایش 12 از 150 کالا</span>
@@ -55,15 +57,17 @@
 
             <div class="row row-cols-1 row-cols-md-3 g-4">
                 <!-- اینجا محصولات را با حلقه کپی کنید (مشابه صفحه اصلی) -->
-                <div class="col">
-                    <div class="card h-100 border-0 shadow-sm">
-                        <img src="https://via.placeholder.com/300" class="card-img-top p-3">
-                        <div class="card-body">
-                            <h5 class="card-title fs-6">آیفون 13 پرو</h5>
-                            <span class="fw-bold d-block mt-3 text-end">50,000,000 تومان</span>
+                {% for product in products %}
+                    <div class="col">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <img src="{{ product.image.url }}" class="card-img-top p-3">
+                            <div class="card-body">
+                                <h5 class="card-title fs-6">{{ product.title }}</h5>
+                                <span class="fw-bold d-block mt-3 text-end">{{ product.price }}</span>
+                            </div>
                         </div>
                     </div>
-                </div>
+                {% endfor %}
             </div>
             
             <!-- صفحه بندی -->

@@ -113,16 +113,21 @@ def logout_view(request):
 def home(request):
     categories = models.Category.objects.all()
     products = models.Product.objects.filter(is_best_seller = True)
-
     some_product = models.Product.objects.filter(is_best_seller = False)
 
     context = {'categories': categories , 'products': products , 'some_product': some_product}
     return render(request, 'home/home.html' , context)
 
 
-
+@login_required(login_url='otp_request')
 def product_list(request):
-    return render(request, 'home/product_list.html')
+    products = models.Product.objects.all()
+    categories = models.Category.objects.all()
+    
+
+    context = {'products': products , 'categories': categories}
+
+    return render(request, 'home/product_list.html' , context)
 
 def product_detail(request, pk):
     return render(request, 'home/product_detail.html')
