@@ -1,4 +1,4 @@
-from django.shortcuts import render , redirect 
+from django.shortcuts import render, redirect, get_object_or_404
 from . import forms 
 from . import models
 import random
@@ -123,14 +123,17 @@ def home(request):
 def product_list(request):
     products = models.Product.objects.all()
     categories = models.Category.objects.all()
-    
 
     context = {'products': products , 'categories': categories}
 
     return render(request, 'home/product_list.html' , context)
 
+
 def product_detail(request, pk):
-    return render(request, 'home/product_detail.html')
+    products = get_object_or_404(models.Product, pk=pk)
+    context = {'product_detail': products}
+    return render(request, 'home/product_detail.html' , context)
+
 
 def cart(request):
     return render(request, 'home/cart.html')

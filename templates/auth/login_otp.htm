@@ -1,31 +1,60 @@
 {% extends 'base.html' %}
 {% block title %}خطا در ورود{% endblock %}
-
 {% block content %}
-<div class="card auth-card border-danger">
-    <div class="auth-header bg-danger">
-        <h4 class="mb-0">کاربر یافت نشد</h4>
-    </div>
-    <div class="card-body p-4">
-        
-        <!-- نمایش ارور اگر از سمت ویو ارسال شده باشد -->
-        {% if form.phone.errors %}
-        <div class="alert alert-warning text-center">
-            {% for error in form.phone.errors %}{{ error }}{% endfor %}
-        </div>
-        {% endif %}
+<style>
+    body { background-color: #f8f9fc; font-family: 'Segoe UI', Tahoma, sans-serif; }
+    .auth-wrapper { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .auth-card {
+        border: none; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        background: #fff; width: 100%; max-width: 480px; margin: 0 auto;
+    }
+    .auth-header {
+        background: linear-gradient(135deg, #ff6b6b 0%, #ee5253 100%);
+        color: white; padding: 35px 30px; text-align: center; border-radius: 16px 16px 0 0;
+    }
+    .auth-header h4 { font-weight: 700; font-size: 1.5rem; }
+    .card-body { padding: 35px 30px; }
+    .form-label { font-weight: 600; color: #4b5563; font-size: 0.9rem; margin-bottom: 8px; }
+    .form-control {
+        border: 1px solid #e5e7eb; padding: 12px; border-radius: 8px;
+        background-color: #f9fafb; font-size: 0.95rem;
+    }
+    .form-control:focus { background-color: #fff; border-color: #ff6b6b; box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.1); }
+    .btn-danger-custom {
+        background: linear-gradient(135deg, #ff6b6b 0%, #ee5253 100%);
+        border: none; color: white; font-weight: 700; padding: 12px; border-radius: 8px;
+        transition: all 0.3s;
+    }
+    .btn-danger-custom:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(238, 82, 83, 0.3); color: white; }
+    .btn-outline-secondary-custom {
+        border: 1px solid #d1d5db; color: #6b7280; font-weight: 600; padding: 12px; border-radius: 8px;
+    }
+    .btn-outline-secondary-custom:hover { background-color: #f3f4f6; color: #374151; }
+</style>
 
-        <form method="POST" action="{% url 'otp_request' %}">
-            {% csrf_token %}
-            <div class="mb-3">
-                <label class="form-label">شماره موبایل خود را مجدد چک کنید:</label>
-                <input type="text" name="phone" class="form-control" placeholder="0912...">
-            </div>
-            <div class="d-grid gap-2">
-                <button type="submit" class="btn btn-danger">تلاش مجدد</button>
-                <a href="{% url 'register' %}" class="btn btn-outline-secondary">می‌خواهم ثبت نام کنم</a>
-            </div>
-        </form>
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h4>کاربر یافت نشد</h4>
+        </div>
+        <div class="card-body">
+            {% if form.phone.errors %}
+                <div class="alert alert-warning text-center" style="border:none; background-color: #fff3cd; color: #856404; border-radius: 8px;">
+                    {% for error in form.phone.errors %}{{ error }}{% endfor %}
+                </div>
+            {% endif %}
+            <form method="POST" action="{% url 'otp_request' %}">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <label class="form-label">شماره موبایل خود را مجدد بررسی کنید:</label>
+                    <input type="text" name="phone" class="form-control" placeholder="0912...">
+                </div>
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-danger-custom">تلاش مجدد</button>
+                    <a href="{% url 'register' %}" class="btn btn-outline-secondary-custom">می‌خواهم ثبت نام کنم</a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %}

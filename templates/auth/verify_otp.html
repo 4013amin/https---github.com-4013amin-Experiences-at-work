@@ -1,51 +1,73 @@
 {% extends 'base.html' %}
 {% block title %}تایید کد{% endblock %}
-
 {% block content %}
-<div class="card auth-card">
-    <div class="auth-header bg-success">
-        <h4 class="mb-0">تایید شماره موبایل</h4>
-    </div>
-    <div class="card-body p-4">
-        
-        <p class="text-center text-muted mb-4">
-            کد ارسال شده به <strong>{{ phone }}</strong> را وارد کنید.
-        </p>
+<style>
+    body { background-color: #f8f9fc; font-family: 'Segoe UI', Tahoma, sans-serif; }
+    .auth-wrapper { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .auth-card {
+        border: none; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        background: #fff; width: 100%; max-width: 480px; margin: 0 auto;
+    }
+    .auth-header {
+        background: linear-gradient(135deg, #1dd1a1 0%, #10ac84 100%);
+        color: white; padding: 35px 30px; text-align: center; border-radius: 16px 16px 0 0;
+    }
+    .auth-header h4 { font-weight: 700; font-size: 1.5rem; }
+    .card-body { padding: 35px 30px; }
+    .otp-input {
+        font-size: 2rem; letter-spacing: 0.5em; text-align: center;
+        border: 2px solid #e5e7eb; border-radius: 12px; padding: 15px;
+        background-color: #f9fafb; font-weight: bold; color: #333;
+    }
+    .otp-input:focus {
+        background-color: #fff; border-color: #1dd1a1;
+        box-shadow: 0 0 0 4px rgba(29, 209, 161, 0.15); outline: none;
+    }
+    .btn-success-custom {
+        background: linear-gradient(135deg, #1dd1a1 0%, #10ac84 100%);
+        border: none; color: white; font-weight: 700; padding: 12px; border-radius: 8px;
+        transition: all 0.3s;
+    }
+    .btn-success-custom:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(16, 172, 132, 0.3); color: white; }
+    .resend-link { color: #6b7280; font-size: 0.9rem; transition: color 0.2s; }
+    .resend-link:hover { color: #10ac84; text-decoration: underline; }
+</style>
 
-<!-- action="..." را حتماً اضافه کنید -->
-        <form method="POST" action="{% url 'verify_otp' %}">            {% csrf_token %}
-            <!-- فیلد مخفی برای نگه داشتن شماره موبایل -->
-            <input type="hidden" name="phone" value="{{ phone }}">
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h4>تایید شماره موبایل</h4>
+        </div>
+        <div class="card-body text-center">
+            <p class="text-muted mb-4">کد ارسال شده به شماره <strong dir="ltr">{{ phone }}</strong> را وارد کنید.</p>
             
-            <div class="mb-3">
-                <input type="text" name="code" maxlength="6" 
-                       class="form-control text-center fs-3 letter-space {% if form.code.errors %}is-invalid{% endif %}" 
-                       placeholder="- - - - - -" autocomplete="off">
-                
-                <!-- نمایش ارورهای کد (اشتباه یا منقضی) -->
-                {% for error in form.code.errors %}
-                    <div class="invalid-feedback text-center mt-2">{{ error }}</div>
-                {% endfor %}
-            </div>
-
-            <div class="d-grid mt-4">
-                <button type="submit" class="btn btn-success py-2">تایید نهایی</button>
-            </div>
-        </form>
-
-        <div class="text-center mt-3">
-            <form action="{% url 'otp_request' %}" method="POST" class="d-inline">
+            <form method="POST" action="{% url 'verify_otp' %}">
                 {% csrf_token %}
                 <input type="hidden" name="phone" value="{{ phone }}">
-                <!-- دکمه ارسال مجدد -->
-                <button type="submit" class="btn btn-link text-decoration-none small text-muted">ارسال مجدد کد</button>
+                
+                <div class="mb-4">
+                    <input type="text" name="code" maxlength="6"
+                           class="form-control otp-input {% if form.code.errors %}is-invalid{% endif %}"
+                           placeholder="- - - - - -" autocomplete="off">
+                    
+                    {% for error in form.code.errors %}
+                        <div class="invalid-feedback" style="font-size: 0.9rem; margin-top: 10px;">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                
+                <div class="d-grid mt-4">
+                    <button type="submit" class="btn btn-success-custom">تایید نهایی</button>
+                </div>
             </form>
+            
+            <div class="mt-4">
+                <form action="{% url 'otp_request' %}" method="POST" class="d-inline">
+                    {% csrf_token %}
+                    <input type="hidden" name="phone" value="{{ phone }}">
+                    <button type="submit" class="btn btn-link resend-link p-0 border-0 bg-transparent">ارسال مجدد کد تایید</button>
+                </form>
+            </div>
         </div>
     </div>
 </div>
-
-<style>
-    /* فاصله بین اعداد کد برای خوانایی بهتر */
-    .letter-space { letter-spacing: 10px; }
-</style>
 {% endblock %}

@@ -27,6 +27,7 @@ class Product(models.Model):
     image = models.ImageField(upload_to="products/")
     title = models.CharField(max_length=100)
     description = models.TextField()
+    count = models.IntegerField()
     price = models.FloatField()
     offer = models.BooleanField(default=False)
     is_best_seller = models.BooleanField(default=False)
