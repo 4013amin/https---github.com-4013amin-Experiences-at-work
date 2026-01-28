@@ -28,16 +28,11 @@ class RegisterAPIView(APIView):
                 "errors": serializer.errors
             })
 
-        profile = serializer.save()
-
-        #Token
-        token , created = Token.objects.get_or_create(user = profile.user)
-
+        serializer.save()
 
         return Response({
             "status": True,
             "message": "با موفقیت ثبت‌نام شدید",
-            'token' : token.key
         }, status=status.HTTP_201_CREATED)
 
     def put(self, request, *args, **kwargs):
@@ -55,7 +50,7 @@ class RegisterAPIView(APIView):
                 "message": "پروفایل یافت نشد"
             }, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = serializers.Register_serializer(instance=profile , data = request.data , partial=True)
+        serializer = serializers.Register_serializer(instance=profile, data=request.data, partial=True)
 
         if not serializer.is_valid():
             return Response({

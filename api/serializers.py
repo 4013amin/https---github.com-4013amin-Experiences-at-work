@@ -9,6 +9,18 @@ class Register_serializer(serializers.ModelSerializer):
         model = Profile
         fields = ['username' , 'phone' , 'description']
 
+
+    def validate_username(self , value):
+        if User.objects.filter(username=value).exists():
+            raise serializers.ValidationError("این نام کاربری قبلاً ثبت شده است")
+        return value
+
+    def validate_phone(self, value):
+        if Profile.objects.filter(phone=value).exists():
+            raise serializers.ValidationError("این شماره تلفن قبلاً ثبت شده است")
+        return value
+
+
     def create(self , validated_data):
         user = User.objects.create_user(
             username = validated_data['username']
