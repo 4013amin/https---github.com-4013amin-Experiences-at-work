@@ -5,9 +5,17 @@ from app.models import User, OTP, Profile, Category, Cart, Product
 from rest_framework.response import Response
 from . import serializers
 from rest_framework import status
-
+from drf_spectacular.utils import extend_schema, OpenApiExample
+from rest_framework.authtoken.models import Token
 
 # Create your views here.
+@extend_schema(
+    request=serializers.Register_serializer,
+    responses={201: OpenApiExample(
+        'ثبت نام موفق',
+        value={"status": True, "message": "با موفقیت ثبت‌نام شدید"}
+    )}
+)
 class RegisterAPIView(APIView):
     permission_classes = [AllowAny]
 
@@ -20,10 +28,16 @@ class RegisterAPIView(APIView):
                 "errors": serializer.errors
             })
 
-        serializer.save()
+        profile = serializer.save()
+
+        #Token
+        token , created = Token.objects.get_or_create(user = profile.user)
+
+
         return Response({
             "status": True,
-            "message": "با موفقیت ثبت‌نام شدید"
+            "message": "با موفقیت ثبت‌نام شدید",
+            'token' : token.key
         }, status=status.HTTP_201_CREATED)
 
     def put(self, request, *args, **kwargs):

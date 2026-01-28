@@ -1,6 +1,6 @@
 from django.contrib import admin
 from . import models
-
+from rest_framework.authtoken.models import Token
 # Register your models here.
 @admin.register(models.Profile)
 class ProfileAdmin(admin.ModelAdmin):
@@ -22,3 +22,7 @@ class CategoryAdmin(admin.ModelAdmin):
 @admin.register(models.Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ['title' , 'description' , 'price' , 'is_best_seller']
+
+@admin.register(Token)
+class TokenAdmin(admin.ModelAdmin):
+    list_display = ['user', 'key', 'created']
