@@ -34,3 +34,12 @@ class Register_serializer(serializers.ModelSerializer):
         )
 
         return profile
+
+
+class RequestOTPSerializer(serializers.Serializer):
+    phone = serializers.CharField(max_length=11)
+
+    def validate_phone(self, value):
+        if not value.isdigit() or len(value) != 11 or not value.startswith('09'):
+            raise serializers.ValidationError("لطفاً یک شماره موبایل معتبر (مانند 09123456789) وارد کنید.")
+        return value

@@ -1,3 +1,5 @@
+import random
+
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
@@ -64,3 +66,25 @@ class RegisterAPIView(APIView):
             "status": True,
             "message": "با موفقیت ویرایش شدید"
         }, status=status.HTTP_200_OK)
+
+
+class RequestOTPAPIView(APIView):
+    def post(self , request , *args, **kwargs):
+        serializer =serializers.RequestOTPSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response({
+                "status": False,
+                "message": "دیتا نامعتبر است !",
+                "errors": serializer.errors
+            })
+
+        phone = serializer.validated_data['phone']
+
+        profile = Profile.objects.create(phone=phone)
+
+        code = str(random.randint(100000 , 999999))
+        otp = OTP.objects.create( user=profile.user, code=code)
+
+        #Send SMS
+        print(f"OTP for {profile.user.username}: {code}")
+
