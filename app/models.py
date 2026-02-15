@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.utils import timezone
+from datetime import timedelta
 
 # Create your models here.
 
@@ -19,6 +20,10 @@ class OTP(models.Model):
     code = models.CharField(max_length=6)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def is_valid(self):
+        expiration_time = self.created_at + timedelta(minutes=5)
+        return timezone.now() < expiration_time
+
     def __str__(self):
         return f"OTP for {self.user.username}: {self.code}"
 
@@ -27,8 +32,8 @@ class Product(models.Model):
     image = models.ImageField(upload_to="products/")
     title = models.CharField(max_length=100)
     description = models.TextField()
-    count = models.IntegerField()
-    price = models.FloatField()
+    count = models.IntegerField(default=0)
+    price = models.FloatField(default=0)
     offer = models.BooleanField(default=False)
     is_best_seller = models.BooleanField(default=False)
 

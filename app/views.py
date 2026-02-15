@@ -110,7 +110,7 @@ def logout_view(request):
 
 
 @login_required(login_url='otp_request')
-def home(request):
+def dashboard(request):
     categories = models.Category.objects.all()
     products = models.Product.objects.filter(is_best_seller = True)
     some_product = models.Product.objects.filter(is_best_seller = False)
