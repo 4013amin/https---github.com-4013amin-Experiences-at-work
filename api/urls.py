@@ -6,8 +6,10 @@ urlpatterns = [
     path('request_otp/', views.RequestOTPAPIView.as_view(), name='request_otp'),
     path('verify-otp/', views.VerifyOTPAPIView.as_view(), name='verify_otp'),
 
+    # Profile
+    path('profile', views.ProfileAPIView.as_view(), name='profile'),
+
     # Dashboard
     path('products/', views.ProductAPIView.as_view(), name='products'),
-    path('add_product/', views.ProductAPIView.as_view(), name='add_product'),
-
+    path('categories/', views.CategoryAPIView.as_view(), name='categories'),
 ]

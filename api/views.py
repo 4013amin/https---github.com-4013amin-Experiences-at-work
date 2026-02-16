@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 
 # Create your views here.
 @extend_schema(
+    tags=['ثبت نام اولیه'],
     request=serializers.Register_serializer,
     responses={201: OpenApiExample(
         'ثبت نام موفق',
@@ -296,41 +297,76 @@ class VerifyOTPAPIView(APIView):
         }
         return Response(response_data, status=status.HTTP_200_OK)
 
+
+# Profile Section
+class ProfileAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
     @extend_schema(
-        summary="لیست محصولات پرفروش",
-        description="این متد لیست تمام محصولاتی که وضعیت 'پرفروش ترین' (is_best_seller) آن‌ها فعال است را برمی‌گرداند.",
-        responses={200: serializers.ProductSerializer(many=True)}
+        summary="دریافت اطلاعات پروفایل",
+        description="این متد اطلاعات پروفایل کاربری که در حال حاضر لاگین کرده است (بر اساس توکن) را برمی‌گرداند.",
+        responses={
+            200: serializers.ProfileSerializer,
+            401: OpenApiResponse(description="توکن نامعتبر یا ارسال نشده است")
+        }
     )
     def get(self, request, *args, **kwargs):
-        product = Product.objects.filter(is_best_seller=True)
-        serializer = serializers.ProductSerializer(product, many=True)
-        return Response(serializer.data)
+        profile = get_object_or_404(Profile, user=self.request.user)
+        serializer = serializers.ProfileSerializer(profile)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @extend_schema(
+        summary="ویرایش پروفایل کاربر",
+        description="""
+          با استفاده از این متد، کاربر می‌تواند اطلاعات پروفایل خود را ویرایش کند. 
+          نکته: فیلد شماره موبایل یا نام کاربری اگر در سریالایزر Unique باشند، نباید تکراری ارسال شوند.
+          """,
+        request=serializers.ProfileSerializer,
+        responses={
+            200: OpenApiResponse(
+                description="ویرایش با موفقیت انجام شد",
+                examples=[OpenApiExample('نمونه پاسخ موفق', value={
+                    "status": True,
+                    "message": "پروفایل با موفقیت به‌روزرسانی شد",
+                    "data": {"username": "new_name", "phone": "0912..."}
+                })]
+            ),
+            400: OpenApiResponse(description="خطا در اعتبارسنجی داده‌ها")
+        }
+    )
+    def put(self, request, *args, **kwargs):
+        profile = get_object_or_404(Profile, user=self.request.user)
+        serializer = serializers.ProfileSerializer(profile, data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-@extend_schema(
-    summary="ایجاد محصول جدید (با قابلیت آپلود عکس)",
-    description="""
-      برای ارسال عکس، حتماً از فرمت **multipart/form-data** استفاده کنید.
-      در محیط Swagger، بعد از زدن دکمه Try it out، یک فیلد برای انتخاب فایل (Image) ظاهر می‌شود.
-      """,
-    request={
-        'multipart/form-data': serializers.ProductSerializer,
-    },
-    responses={
-        201: OpenApiResponse(description="محصول با موفقیت ساخته شد"),
-        400: OpenApiResponse(description="خطا در مقادیر ورودی")
-    }
-)
 class ProductAPIView(APIView):
     permission_classes = [IsAuthenticated]
     parser_classes = [MultiPartParser, FormParser]
 
-
     def get(self, request, *args, **kwargs):
         product = Product.objects.filter(is_best_seller=True)
         serializer = serializers.ProductSerializer(product, many=True)
         return Response(serializer.data)
 
+    @extend_schema(
+        summary="ایجاد محصول جدید (با قابلیت آپلود عکس)",
+        description="""
+          برای ارسال عکس، حتماً از فرمت **multipart/form-data** استفاده کنید.
+          در محیط Swagger، بعد از زدن دکمه Try it out، یک فیلد برای انتخاب فایل (Image) ظاهر می‌شود.
+          """,
+        request={
+            'multipart/form-data': serializers.ProductSerializer,
+        },
+        responses={
+            201: OpenApiResponse(description="محصول با موفقیت ساخته شد"),
+            400: OpenApiResponse(description="خطا در مقادیر ورودی")
+        }
+    )
     def post(self, request, *args, **kwargs):
         serializer = serializers.ProductSerializer(data=request.data)
         if not serializer.is_valid():
@@ -342,7 +378,7 @@ class ProductAPIView(APIView):
         count = serializer.validated_data['count']
         price = serializer.validated_data['price']
 
-        product = Product.objects.create(
+        products = Product.objects.create(
             image=image,
             title=title,
             description=description,
@@ -350,11 +386,20 @@ class ProductAPIView(APIView):
             price=price,
         )
 
-        product = serializer.save()
+        products = serializer.save()
 
         response_data = {
             'status': True,
             'message': 'This is ok and data saved !',
-            'data': serializers.ProductSerializer(product).data
+            'data': serializers.ProductSerializer(products).data
         }
         return Response(response_data, status=status.HTTP_200_OK)
+
+
+class CategoryAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        categories = Category.objects.all()
+        serializer = serializers.CategorySerializer(categories, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
