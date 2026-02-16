@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from datetime import timedelta
 
+
 # Create your models here.
 
 class Profile(models.Model):
@@ -36,6 +37,7 @@ class Product(models.Model):
     price = models.FloatField(default=0)
     offer = models.BooleanField(default=False)
     is_best_seller = models.BooleanField(default=False)
+    category = models.ForeignKey("Category", on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return self.title
@@ -57,7 +59,7 @@ class Category(models.Model):
 class Cart(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    code_offer = models.BooleanField(default=False)
+    code_offer = models.CharField(max_length=10)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

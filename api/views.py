@@ -377,6 +377,7 @@ class ProductAPIView(APIView):
         description = serializer.validated_data['description']
         count = serializer.validated_data['count']
         price = serializer.validated_data['price']
+        category = serializer.validated_data['category']
 
         products = Product.objects.create(
             image=image,
@@ -384,13 +385,14 @@ class ProductAPIView(APIView):
             description=description,
             count=count,
             price=price,
+            category=category
         )
 
         products = serializer.save()
 
         response_data = {
             'status': True,
-            'message': 'This is ok and data saved !',
+            'message': 'محصول با موفقیت ذخیره شد .',
             'data': serializers.ProductSerializer(products).data
         }
         return Response(response_data, status=status.HTTP_200_OK)
@@ -403,3 +405,64 @@ class CategoryAPIView(APIView):
         categories = Category.objects.all()
         serializer = serializers.CategorySerializer(categories, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class CartAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+        summary="مشاهده سبد خرید کاربر",
+        description="این متد تمام محصولاتی که کاربر فعلی به سبد خرید خود اضافه کرده است را نمایش می‌دهد.",
+        responses={
+            200: serializers.CartSerializer(many=True),
+            401: OpenApiResponse(description="کاربر وارد نشده است")
+        }
+    )
+    def get(self, request, *args, **kwargs):
+        cart_items = Cart.objects.filter(user=request.user)
+        serializer = serializers.CartSerializer(cart_items, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @extend_schema(
+        summary="افزودن محصول به سبد خرید",
+        description="""
+          برای افزودن محصول، شناسه محصول (product ID) را ارسال کنید. 
+          فیلد code_offer به صورت Boolean (true/false) مشخص می‌کند که آیا کد تخفیف اعمال شود یا خیر.
+          """,
+        request=serializers.CartSerializer,
+        responses={
+            201: OpenApiResponse(
+                description="محصول با موفقیت اضافه شد",
+                examples=[OpenApiExample('نمونه پاسخ موفق', value={
+                    "status": True,
+                    "message": "محصول با موفقیت به سبد خرید اضافه شد.",
+                    "data": {
+                        "id": 1,
+                        "product": {"id": 10, "title": "نام محصول", "price": 5000},
+                        "code_offer": False
+                    }
+                })]
+            ),
+            400: OpenApiResponse(description="خطا در اطلاعات ارسالی (مثلا محصول وجود ندارد)")
+        }
+    )
+    def post(self, request, *args, **kwargs):
+        serializer = serializers.CartSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        product = serializer.validated_data['product']
+        code_offer = serializer.validated_data['code_offer']
+
+        cart_item = Cart.objects.create(
+            user=request.user,
+            product=product,
+            code_offer=code_offer
+        )
+
+        response_data = {
+            'status': True,
+            'message': 'محصول با موفقیت به سبد خرید اضافه شد.',
+            'data': serializers.CartSerializer(cart_item).data
+        }
+        return Response(response_data, status=status.HTTP_201_CREATED)
