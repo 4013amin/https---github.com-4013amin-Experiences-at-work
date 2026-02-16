@@ -41,8 +41,11 @@ INSTALLED_APPS = [
     # Token
     'rest_framework.authtoken',
 
-    'app'
+    'app',
+    'marketplace',
 ]
+
+# AUTH_USER_MODEL = 'marketplace.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
