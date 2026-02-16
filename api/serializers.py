@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from app.models import Category, Cart, Product, Profile, OTP, User
+from app.models import Category, Cart, Product, Profile, OTP, User, HistoryPyment
 from drf_spectacular.utils import extend_schema, OpenApiExample, OpenApiTypes, extend_schema_field
 
 
@@ -74,4 +74,10 @@ class CategorySerializer(serializers.ModelSerializer):
 class CartSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cart
+        fields = '__all__'
+
+
+class PymentHistorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HistoryPyment
         fields = '__all__'

@@ -13,7 +13,8 @@ urlpatterns = [
     path('products/', views.ProductAPIView.as_view(), name='products'),
     path('categories/', views.CategoryAPIView.as_view(), name='categories'),
 
-
-    #Cart
+    # Cart
     path('cart/', views.CartAPIView.as_view(), name='cart'),
+
+    path('pyment_history/', views.PymentHistoryAPIView.as_view(), name='orders'),
 ]

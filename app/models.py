@@ -64,3 +64,17 @@ class Cart(models.Model):
 
     class Meta:
         verbose_name_plural = "Cart"
+
+
+class HistoryPyment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    price = models.FloatField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    description = models.TextField()
+
+    def __str__(self):
+        return self.user
+
+    class Meta:
+        verbose_name_plural = "HistoryPyment"
+        ordering = ['created_at']

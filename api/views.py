@@ -5,7 +5,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from app.models import User, OTP, Profile, Category, Cart, Product
+from app.models import User, OTP, Profile, Category, Cart, Product, HistoryPyment
 from rest_framework.response import Response
 from . import serializers
 from rest_framework import status
@@ -14,7 +14,7 @@ from rest_framework.authtoken.models import Token
 from django.db import transaction
 import logging
 
-from .serializers import CartSerializer
+from .serializers import CartSerializer, PymentHistorySerializer
 
 logger = logging.getLogger(__name__)
 
@@ -481,3 +481,49 @@ class CartAPIView(APIView):
             'data': serializers.CartSerializer(cart_item).data
         }
         return Response(response_data, status=status.HTTP_201_CREATED)
+
+
+class PymentHistoryAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        history = HistoryPyment.objects.filter(user=request.user)
+        serializer = serializers.PymentHistorySerializer(history, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @extend_schema(
+        summary="افزودن دیتا به تاریخچه پرداخت ها به صورت تست است این متد",
+        request=PymentHistorySerializer,
+        responses={
+            201: OpenApiResponse(
+                response=CartSerializer,
+                description="تاریخچه ایجاد شد",
+                examples=[
+                    OpenApiExample(
+                        "نمونه پاسخ موفق",
+                        value={
+                            "status": True,
+                            "message": "تاریخچه پرداخت ایجاد شد",
+
+                        }
+                    )
+                ]
+            ),
+            400: OpenApiResponse(description="اطلاعات نامعتبر است")
+        }
+    )
+    def post(self, request, *args, **kwargs):
+        serializer = serializers.PymentHistorySerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        user = request.user
+        price = serializer.validated_data['price']
+        description = serializer.validated_data['description']
+
+        history = HistoryPyment.objects.create(
+            user=user,
+            price=price,
+            description=description
+        )
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
