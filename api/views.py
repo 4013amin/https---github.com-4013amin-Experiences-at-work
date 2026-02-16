@@ -1,4 +1,6 @@
 import random
+from datetime import timezone, timedelta
+
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
@@ -11,6 +13,8 @@ from drf_spectacular.utils import extend_schema, OpenApiExample, OpenApiResponse
 from rest_framework.authtoken.models import Token
 from django.db import transaction
 import logging
+
+from .serializers import CartSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -270,7 +274,11 @@ class VerifyOTPAPIView(APIView):
 
         profile = get_object_or_404(Profile, phone=phone)
         user_obj = profile.user
-        enter_code = get_object_or_404(OTP, user=user_obj, code=code)
+        enter_code = OTP.objects.filter(
+            user=user_obj,
+            code=code,
+            created_at__gte=timezone.now() - timedelta(minutes=5)
+        ).first()
 
         if not enter_code.is_valid():
             return Response({"error": "کد وارد شده منقضی شده است."}, status=status.HTTP_400_BAD_REQUEST)
@@ -426,24 +434,31 @@ class CartAPIView(APIView):
     @extend_schema(
         summary="افزودن محصول به سبد خرید",
         description="""
-          برای افزودن محصول، شناسه محصول (product ID) را ارسال کنید. 
-          فیلد code_offer به صورت Boolean (true/false) مشخص می‌کند که آیا کد تخفیف اعمال شود یا خیر.
-          """,
-        request=serializers.CartSerializer,
+    شناسه محصول (product) و وضعیت اعمال کد تخفیف (code_offer) را ارسال کنید.
+    فرمت درخواست باید multipart/form-data یا application/json باشد.
+            """,
+        request=CartSerializer,
         responses={
             201: OpenApiResponse(
+                response=CartSerializer,
                 description="محصول با موفقیت اضافه شد",
-                examples=[OpenApiExample('نمونه پاسخ موفق', value={
-                    "status": True,
-                    "message": "محصول با موفقیت به سبد خرید اضافه شد.",
-                    "data": {
-                        "id": 1,
-                        "product": {"id": 10, "title": "نام محصول", "price": 5000},
-                        "code_offer": False
-                    }
-                })]
+                examples=[
+                    OpenApiExample(
+                        "نمونه پاسخ موفق",
+                        value={
+                            "status": True,
+                            "message": "محصول با موفقیت به سبد خرید اضافه شد.",
+                            "data": {
+                                "id": 1,
+                                "product": 10,
+                                "code_offer": False,
+                                "user": 3
+                            }
+                        }
+                    )
+                ]
             ),
-            400: OpenApiResponse(description="خطا در اطلاعات ارسالی (مثلا محصول وجود ندارد)")
+            400: OpenApiResponse(description="اطلاعات نامعتبر است")
         }
     )
     def post(self, request, *args, **kwargs):
