@@ -5,9 +5,9 @@ from marketplace.permissions.counstomer import CustomerPermission
 from . import models
 
 
-class RegisterSerializer(serializers.ModelSerializer):
+class VerndorRegisterSerializer(serializers.ModelSerializer):
     permission_classes = [CustomerPermission]
 
     class Meta:
-        model = models.Profile
-        fields = '__all__'
+        model = models.vendor_request
+        fields = ['phone', 'description']
